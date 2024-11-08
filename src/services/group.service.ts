@@ -1,6 +1,5 @@
 import { BadRequestException, HttpCode, Injectable, Put } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { isObject, IsObject } from "class-validator";
 import { isValidObjectId, Model } from "mongoose";
 import { RedisFunction } from "src/common/redisFunctions";
 import CreateGroupDto from "src/dto/createGroup.dto";
@@ -20,7 +19,7 @@ export class GroupService{
     
     async createGroup(reqBody:CreateGroupDto,uuid:string){
         try {
-            if(await this.groupModel.findOne({adminId:uuid,groupName:reqBody.groupName})){
+            if(await this.groupModel.findOne({$and:[{adminId:uuid,groupName:reqBody.groupName}]})){
                 throw new BadRequestException(CONSTANTS.msgValidation.duplicateGroupName);
             }
             reqBody['groupSize']=1;
